@@ -5,22 +5,37 @@ import { cn } from '@/lib/utils'
 import { RichText } from '@/lib/rich-text'
 import { BlockRenderer } from './BlockRenderer'
 
-export function ChapterCard({ chapter }: { chapter: Chapter }) {
+export function ChapterCard({
+  chapter,
+  forceOpen = false,
+  staticMode = false,
+}: {
+  chapter: Chapter
+  /** 导出视图里强制展开，让长图包含全部内容 */
+  forceOpen?: boolean
+  /** 静态渲染：去掉折叠交互与展开箭头 */
+  staticMode?: boolean
+}) {
   const [open, setOpen] = useState<boolean>(Boolean(chapter.defaultOpen))
   const { isDone, toggle } = useProgress()
   const done = isDone(chapter.id)
+  const expanded = forceOpen || open
 
   return (
     <article
-      id={chapter.id}
+      id={staticMode ? undefined : chapter.id}
       className={cn(
         'print-flat overflow-hidden rounded-2xl border bg-card shadow-[0_1px_2px_rgba(16,24,40,.05),0_8px_24px_rgba(16,24,40,.04)] transition-colors',
         done ? 'border-brand-200' : 'border-line',
+        staticMode && 'pointer-events-none',
       )}
     >
       <div
-        className="flex cursor-pointer select-none items-start gap-3 px-4 py-3.5 hover:bg-[#fcfdfd]"
-        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          'flex select-none items-start gap-3 px-4 py-3.5',
+          !staticMode && 'cursor-pointer hover:bg-[#fcfdfd]',
+        )}
+        onClick={staticMode ? undefined : () => setOpen((v) => !v)}
       >
         <input
           type="checkbox"
@@ -54,18 +69,25 @@ export function ChapterCard({ chapter }: { chapter: Chapter }) {
           </div>
         </div>
 
-        <span
-          aria-hidden
-          className={cn(
-            'no-print mt-1 flex-none text-[12px] text-[#9aa4b2] transition-transform duration-200',
-            open && 'rotate-90',
-          )}
-        >
-          ▶
-        </span>
+        {!staticMode && (
+          <span
+            aria-hidden
+            className={cn(
+              'no-print mt-1 flex-none text-[12px] text-[#9aa4b2] transition-transform duration-200',
+              expanded && 'rotate-90',
+            )}
+          >
+            ▶
+          </span>
+        )}
       </div>
 
-      <div className={cn('print-expand border-t border-dashed border-line-soft px-4 pt-1 pb-4 pl-11', open ? 'block' : 'hidden')}>
+      <div
+        className={cn(
+          'print-expand border-t border-dashed border-line-soft px-4 pt-1 pb-4 pl-11',
+          expanded ? 'block' : 'hidden',
+        )}
+      >
         {chapter.intro && (
           <p className="mt-3 text-[13.6px] leading-relaxed text-sub">
             <RichText text={chapter.intro} />

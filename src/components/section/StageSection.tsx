@@ -4,9 +4,19 @@ import { ChapterCard } from '@/components/ui/ChapterCard'
 import { Callout } from '@/components/ui/Callout'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 
-export function StageSection({ stage }: { stage: Stage }) {
+export function StageSection({
+  stage,
+  anchor = true,
+  staticMode = false,
+}: {
+  stage: Stage
+  /** 导出视图里不重复渲染锚点 id */
+  anchor?: boolean
+  /** 静态渲染：章节卡全部展开、不可交互 */
+  staticMode?: boolean
+}) {
   return (
-    <section id={stage.id} className="mt-12">
+    <section id={anchor ? stage.id : undefined} className="mt-12">
       <SectionHeading
         no={stage.no}
         title={`${stage.title}（${stage.duration}）`}
@@ -28,7 +38,7 @@ export function StageSection({ stage }: { stage: Stage }) {
 
       <div className="space-y-2.5">
         {stage.chapters.map((chapter) => (
-          <ChapterCard key={chapter.id} chapter={chapter} />
+          <ChapterCard key={chapter.id} chapter={chapter} forceOpen={staticMode} staticMode={staticMode} />
         ))}
       </div>
     </section>
