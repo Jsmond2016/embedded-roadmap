@@ -1,9 +1,9 @@
-# 尚硅谷嵌入式方向 · 自学教案（Web 版）
+# 嵌入式自学路线图 · embedded-roadmap
 
 把一份静态 HTML 教案改造成了可长期维护的前端项目：React + TypeScript + Vite + Tailwind CSS，
 内容与组件分离，改文字只动 `src/data`，改样式只动 `src/index.css` 与 `src/components`。
 
-线上预览地址（部署后填写）：`https://<你的用户名>.github.io/embedded-pro/`
+线上预览地址（部署后填写）：`https://<你的用户名>.github.io/embedded-roadmap/`
 
 ---
 
@@ -11,7 +11,7 @@
 
 - 六大阶段 + 开篇 / 总览 / 22 周计划 / 器材预算 / 避坑清单，共 35 个章节卡片
 - 章节可折叠，勾选即记录完成状态，进度条实时更新
-- 进度存在浏览器 `localStorage`（键名 `embedded-pro:progress:v1`），换设备不同步
+- 进度存在浏览器 `localStorage`（键名 `embedded-roadmap:progress:v1`），换设备不同步
 - 左侧目录导航 + 移动端抽屉目录，支持 `#s1` 这类锚点直达
 - 打印 / 另存 PDF：自动展开所有卡片、隐藏导航（`no-print`、`print-expand`）
 - 墨绿主题通过 Tailwind v4 的 `@theme` token 统一管理，改一处全站生效
@@ -43,7 +43,7 @@ pnpm format       # Prettier 格式化 src
 ## 目录结构
 
 ```
-embedded-pro/
+embedded-roadmap/
 ├─ .github/workflows/deploy.yml   # 推 main 自动构建并发布 Pages
 ├─ public/favicon.svg
 ├─ reference/                     # 原始单文件 HTML 教案，仅作内容备份，不参与构建
@@ -144,22 +144,22 @@ embedded-pro/
 
 ## 部署到 GitHub Pages
 
-1. 在 GitHub 新建空仓库（例如 `embedded-pro`），**不要**勾选初始化 README。
+1. 在 GitHub 新建空仓库（例如 `embedded-roadmap`），**不要**勾选初始化 README。
 2. 本地关联并推送：
 
    ```bash
-   git remote add origin https://github.com/<用户名>/embedded-pro.git
+   git remote add origin https://github.com/<用户名>/embedded-roadmap.git
    git branch -M main
    git push -u origin main
    ```
 
 3. 仓库 `Settings → Pages → Build and deployment → Source` 选择 **GitHub Actions**。
 4. 推送后 Actions 会自动跑 `deploy.yml`，完成后地址为
-   `https://<用户名>.github.io/embedded-pro/`。
+   `https://<用户名>.github.io/embedded-roadmap/`。
 
 `vite.config.ts` 会从 `GITHUB_REPOSITORY` 读取仓库名自动设置 `base`，所以：
 
-- 仓库叫 `embedded-pro` → 产物资源路径是 `/embedded-pro/`；
+- 仓库叫 `embedded-roadmap` → 产物资源路径是 `/embedded-roadmap/`；
 - 部署到 `<用户名>.github.io` 这类根仓库 → 自动退化为 `/`；
 - 本地 `pnpm dev` → `/`。
 

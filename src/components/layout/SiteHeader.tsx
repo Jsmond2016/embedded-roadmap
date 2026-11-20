@@ -17,7 +17,7 @@ export function SiteHeader() {
 
       <div className="relative mx-auto max-w-[1180px]">
         <p className="mb-2 text-[12px] tracking-[0.18em] text-white/70 uppercase">
-          Embedded Systems · Self-taught Roadmap
+          Embedded · Roadmap
         </p>
 
         <h1 className="text-[26px] leading-tight font-bold tracking-tight sm:text-[30px]">
