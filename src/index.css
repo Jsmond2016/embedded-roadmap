@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+/* ---------- 设计变量（墨绿纸感主题） ---------- */
+@theme {
+  --color-paper: #f5f7f8;
+  --color-card: #ffffff;
+  --color-ink: #14181e;
+  --color-ink-soft: #39424e;
+  --color-sub: #5b6472;
+  --color-faint: #8c96a3;
+  --color-line: #e3e7ec;
+  --color-line-soft: #eff1f4;
+
+  --color-brand-50: #eff8f5;
+  --color-brand-100: #d6ece7;
+  --color-brand-200: #aedcd2;
+  --color-brand-300: #7fc4b6;
+  --color-brand-400: #3fa593;
+  --color-brand-500: #14897a;
+  --color-brand-600: #0b6b5f;
+  --color-brand-700: #08564c;
+  --color-brand-900: #04302b;
+
+  --color-ok: #0e8a7a;
+  --color-warn: #b45309;
+  --color-warn-bg: #fdf8ef;
+  --color-warn-line: #f0dcb5;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei',
+    'PingFang SC', 'Hiragino Sans GB', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Consolas, 'Liberation Mono', monospace;
+}
+
+/* ---------- 基础 ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-brand-100);
+    color: var(--color-brand-900);
+  }
+
+  /* 锚点跳转时给吸顶头留出空间 */
+  [id] {
+    scroll-margin-top: 84px;
+  }
+}
+
+/* ---------- 滚动条 ---------- */
+@layer utilities {
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd3da transparent;
+  }
+  .scroll-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: #cbd3da;
+    border-radius: 99px;
+  }
+  .scroll-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ---------- 打印：全部展开、隐藏交互 ---------- */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-expand {
+    display: block !important;
+  }
+
+  .print-flat {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
