@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>尚硅谷嵌入式 · 自学教案与大纲</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --line:#e4e7ec; --text:#1a1d23; --sub:#5b6472;
+    --accent:#0b6b5f; --accent2:#0e8a7a; --warn:#b45309; --red:#b42318;
+    --chip:#eef6f4;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",Roboto,sans-serif;
+    font-size:15px; line-height:1.75;
+  }
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+
+  /* header */
+  header.top{
+    background:linear-gradient(135deg,#0b6b5f 0%,#127d6d 45%,#1a9e88 100%);
+    color:#fff;padding:38px 20px 32px;margin-bottom:0;
+  }
+  header.top .inner{max-width:1080px;margin:0 auto}
+  header.top h1{margin:0 0 8px;font-size:28px;letter-spacing:.5px;font-weight:700}
+  header.top .meta{color:rgba(255,255,255,.82);font-size:13.5px;line-height:1.9}
+  header.top .meta b{color:#fff;font-weight:600}
+  .badges{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .badge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);padding:3px 10px;border-radius:999px;font-size:12.5px}
+
+  /* progress */
+  .prog-wrap{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .prog-inner{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+  .prog-track{flex:1;height:8px;background:#eef1f4;border-radius:99px;overflow:hidden}
+  .prog-fill{height:100%;width:0;background:linear-gradient(90deg,#0b6b5f,#22b8a0);transition:width .25s}
+  .prog-num{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums;min-width:96px;text-align:right}
+  .prog-inner button{
+    border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:8px;
+    padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:inherit
+  }
+  .prog-inner button:hover{color:var(--text);border-color:#c8cfd8}
+
+  /* nav chips */
+  nav.chips{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px}
+  nav.chips a{
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 13px;
+    font-size:13px;color:var(--sub);box-shadow:var(--shadow)
+  }
+  nav.chips a:hover{color:var(--accent);border-color:#bcd9d3}
+
+  /* sections */
+  section{margin-top:34px;scroll-margin-top:60px}
+  h2.sec{
+    font-size:20px;margin:0 0 4px;display:flex;align-items:center;gap:10px;font-weight:700
+  }
+  h2.sec .no{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;font-size:15px;flex:none
+  }
+  .sec-desc{color:var(--sub);font-size:13.5px;margin:0 0 14px 40px}
+
+  /* card */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:18px 20px;margin-bottom:12px
+  }
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card p{margin:6px 0}
+
+  /* chapter */
+  .chapter{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden
+  }
+  .ch-head{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
+  .ch-head:hover{background:#fcfdfd}
+  .ch-head input[type=checkbox]{
+    margin-top:5px;width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:none
+  }
+  .ch-title{flex:1;font-weight:600;font-size:15.5px;line-height:1.6}
+  .ch-title .tag{
+    font-weight:400;font-size:12px;color:var(--sub);background:#f2f4f7;border-radius:6px;
+    padding:2px 7px;margin-left:8px;white-space:nowrap
+  }
+  .ch-fold{color:#9aa4b2;font-size:12px;transition:transform .2s;flex:none;margin-top:4px}
+  .chapter.open .ch-fold{transform:rotate(90deg)}
+  .ch-body{display:none;padding:0 18px 16px 46px;border-top:1px dashed #edf0f3}
+  .chapter.open .ch-body{display:block}
+  .ch-body h4{margin:14px 0 4px;font-size:13.5px;color:var(--accent);letter-spacing:.5px}
+  .ch-body ul{margin:4px 0 0;padding-left:18px}
+  .ch-body li{margin:3px 0;font-size:14px}
+  .ch-body li b{font-weight:600}
+  .ch-body .box{
+    margin-top:12px;background:#f8fafb;border-left:3px solid #cfe3de;border-radius:0 8px 8px 0;
+    padding:9px 12px;font-size:13.5px;color:#39424e
+  }
+  .ch-body .box.ok{border-left-color:#22b8a0;background:#f3faf8}
+  .ch-body .box.warn{border-left-color:#e0a449;background:#fdf8ef}
+  .ch-body .box b{color:var(--text)}
+
+  /* table */
+  .tbl-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:12px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid #eff1f4;vertical-align:top}
+  th{background:#f7f9fa;font-weight:600;color:#2c3440;white-space:nowrap;font-size:13px}
+  tr:last-child td{border-bottom:none}
+  td b{font-weight:600}
+  .nowrap{white-space:nowrap}
+  .center{text-align:center}
+
+  /* callout */
+  .callout{border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:14px}
+  .callout.tip{background:#f0f8f6;border:1px solid #c9e6df}
+  .callout.note{background:#fdf8ef;border:1px solid #f0dcb5}
+  .callout b{font-weight:650}
+  .callout ul{margin:8px 0 0;padding-left:18px}
+  .callout li{margin:4px 0}
+
+  footer{max-width:1080px;margin:40px auto 0;padding:0 20px;color:#8c96a3;font-size:12.5px;line-height:1.9}
+
+  @media (max-width:640px){
+    header.top h1{font-size:22px}
+    .wrap{padding:0 14px 60px}
+    nav.chips{padding:0 14px}
+    .ch-body{padding-left:18px}
+    .prog-num{min-width:72px;font-size:12px}
+    body{font-size:14.5px}
+  }
+  @media print{
+    body{background:#fff}
+    .prog-wrap,nav.chips,.ch-fold,.prog-inner button{display:none}
+    .chapter,.card,.tbl-wrap,.callout{box-shadow:none;break-inside:avoid}
+    .ch-body{display:block !important}
+    header.top{background:#0b6b5f !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <h1>尚硅谷嵌入式方向 · 自学教案与大纲</h1>
+    <div class="meta">
+      对标 <b>尚硅谷「嵌入式（物联网方向）」六大阶段</b> 课程体系 —— 软硬件基础 / 51 单片机 / STM32 / FreeRTOS / 嵌入式 Linux / 项目与就业<br>
+      按<b>公开课程目录与视频章节</b>拆解为「章 → 知识点 → 必做实验 → 验收标准」，可直接当学习日历使用
+    </div>
+    <div class="badges">
+      <span class="badge">全职节奏 22 周</span>
+      <span class="badge">半职节奏 32 周</span>
+      <span class="badge">每章带验收标准</span>
+      <span class="badge">可勾选进度</span>
+    </div>
+  </div>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <span style="font-size:13px;color:#5b6472;white-space:nowrap">学习进度</span>
+    <div class="prog-track"><div class="prog-fill" id="fill"></div></div>
+    <span class="prog-num" id="num">0 / 0 章</span>
+    <button id="resetBtn">重置</button>
+  </div>
+</div>
+
+<nav class="chips">
+  <a href="#pre">0 开篇：起点与节奏</a>
+  <a href="#s1">阶段一 软硬件基础</a>
+  <a href="#s2">阶段二 51 单片机</a>
+  <a href="#s3">阶段三 STM32</a>
+  <a href="#s4">阶段四 RTOS 与进阶</a>
+  <a href="#s5">阶段五 嵌入式 Linux</a>
+  <a href="#s6">阶段六 项目与就业</a>
+  <a href="#plan">周计划表</a>
+  <a href="#kit">器材与预算</a>
+  <a href="#pit">避坑清单</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ 0 开篇 ============ -->
+<section id="pre">
+  <h2 class="sec"><span class="no">0</span>开篇：先定节奏，再谈内容</h2>
+  <p class="sec-desc">这份教案的前提假设：你有 7 年前端工程经验，逻辑与工程能力不缺，缺的是硬件常识、C 语言底层、以及「对着板子调通」的手感。</p>
+
+  <div class="callout tip">
+    <b>三条定调结论（先看这三句，再往下读）</b>
+    <ul>
+      <li>① <b>C 语言那一章可以压缩</b>：语法你基本都会，真正要补的是 <b>指针与内存布局、位运算、const/volatile/static、内存分区</b>——这四项直接决定你能不能看懂寄存器操作。</li>
+      <li>② <b>模电不用啃教材</b>：尚硅谷第一阶段的「电子元器件 + 数字电路」目标是「看得懂原理图、算得出限流电阻」，不是培养硬件工程师，够用即止。</li>
+      <li>③ <b>你的差异化在「屏 + 交互」</b>：LVGL、Qt、上位机界面是你的主场（前端审美与交互经验可迁移），这是纯硬件出身的候选人做不了的，后文会展开。</li>
+    </ul>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>节奏</th><th>每周投入</th><th>总周期</th><th>适用场景</th><th>风险提示</th></tr></thead>
+      <tbody>
+        <tr><td><b>全职冲刺</b></td><td>40–50 h</td><td>约 22 周（5 个多月）</td><td>目前处于空窗期，可全天投入，目标尽快回到就业市场</td><td>连续 5 个月无收入，需预留 6 个月生活费；建议第 14 周起同步投递实习/外包</td></tr>
+        <tr><td><b>半职并行</b></td><td>18–22 h</td><td>约 32 周（8 个月）</td><td>边接私活/兼职边学，现金流不断</td><td>周期长易疲劳，必须固定「每天 3 小时 + 周末半天」的硬时段</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <b>时间分配原则（非常重要）</b>
+    <ul>
+      <li>视频时长 : 动手时长 ≈ <b>1 : 2</b>。尚硅谷嵌入式公开视频累计数百小时，若按 1:1 看，永远学不完；按 1:2 动手，看一遍就能留下。</li>
+      <li>每个阶段结束必须有 <b>一个能演示的产物</b>（可运行、可拍照、可放 GitHub）。没有产物的阶段 = 没学。</li>
+      <li>每周留 <b>半天「补债时间」</b>，专治上一周没调通的实验，不要无限拖延主线。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 总览表 ============ -->
+<section id="overview">
+  <h2 class="sec"><span class="no">◎</span>六阶段总览（这张表就是你的目录）</h2>
+  <p class="sec-desc">尚硅谷官网课程大纲的六个阶段，加上我补充的「时长 / 产出物 / 验收」三列，方便你按周推进。</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>阶段</th><th>模块</th><th>建议时长</th><th>核心目标</th><th>阶段产出物</th><th>难度</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="5"><b>一</b></td><td>嵌入式电子元器件</td><td>4 天</td><td>认得、算得、焊得上</td><td rowspan="5">面包板综合实验板 + 一块自画自打的 STM32 最小系统板</td><td rowspan="5">★★☆</td></tr>
+        <tr><td>C 语言精讲（压缩版）</td><td>8 天</td><td>指针、位运算、内存布局过关</td></tr>
+        <tr><td>数字电路：从零搭建计算机</td><td>4 天</td><td>知道 CPU 是怎么被搭出来的</td></tr>
+        <tr><td>原理图 &amp; PCB 设计</td><td>5 天</td><td>能独立画板、打样</td></tr>
+        <tr><td>示波器 / 电源 / 万用表 / 逻辑分析仪</td><td>3 天</td><td>会测量、会看波形</td></tr>
+
+        <tr><td><b>二</b></td><td>51 单片机（含智能小车）</td><td>3 周</td><td>打通「外设 → 代码 → 现象」的闭环</td><td>51 智能小车（循迹 + 避障 + 蓝牙遥控）</td><td>★★☆</td></tr>
+
+        <tr><td rowspan="3"><b>三</b></td><td>STM32 基础篇（寄存器 + HAL 双线）</td><td>4 周</td><td>吃透 GPIO/中断/串口/I2C/定时器/DMA/ADC/SPI/FSMC</td><td rowspan="3">带屏的温度采集终端（LCD 显示 + 串口上报 + Flash 存配置）</td><td rowspan="3">★★★★</td></tr>
+        <tr><td>STM32 进阶（LCD / 存储器 / 高性能外设）</td><td>2 周</td><td>FSMC 驱动屏、Flash 读写、CAN</td></tr>
+        <tr><td>物联网通信实战（WiFi / 4G / LoRa / 蓝牙 / GPS）</td><td>2 周</td><td>能做出「上云」的终端</td></tr>
+
+        <tr><td rowspan="3"><b>四</b></td><td>FreeRTOS</td><td>2 周</td><td>任务、队列、信号量、优先级翻转</td><td rowspan="3">带 OTA + LVGL 界面的小产品原型</td><td rowspan="3">★★★★</td></tr>
+        <tr><td>BootLoader / IAP / OTA 升级</td><td>1 周</td><td>远程升级不掉砖</td></tr>
+        <tr><td>LVGL 图形界面 + STM32 加密</td><td>1 周</td><td>移植屏上跑 UI；读保护</td></tr>
+
+        <tr><td rowspan="4"><b>五</b></td><td>Ubuntu 快速上手 + Shell</td><td>1 周</td><td>命令行、脚本、环境</td><td rowspan="4">自编译内核 + 自写字符设备驱动 + 一个 Linux 应用（跑在开发板上）</td><td rowspan="4">★★★★★</td></tr>
+        <tr><td>Linux 应用层开发（130 集体系）</td><td>4 周</td><td>文件 IO / 进程线程 / 网络 / IO 多路复用</td></tr>
+        <tr><td>系统移植（U-Boot / 内核 / 设备树 / 根文件系统）</td><td>3 周</td><td>把系统从零跑起来</td></tr>
+        <tr><td>驱动开发</td><td>3 周</td><td>字符设备、platform 总线、设备树匹配</td></tr>
+
+        <tr><td><b>六</b></td><td>项目实战 + 简历面试</td><td>4 周</td><td>两个完整项目 + 可讲清楚的细节</td><td>2 个项目仓库 + 简历 + 项目讲解稿</td><td>★★★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <b>如果时间只够走一条路线</b>：优先 <b>三（STM32）+ 四（RTOS）+ 六（项目）</b>，把 MCU 方向做扎实，最快 4 个月可投简历；Linux 方向门槛高、周期长（通常需 5–6 个月），但天花板也更高。两条路的技术栈在「阶段三」之后才分叉，前面完全可以共用。
+  </div>
+</section>
+
+<!-- ============ 阶段一 ============ -->
+<section id="s1">
+  <h2 class="sec"><span class="no">1</span>阶段一 · 软硬件基础（约 4 周）</h2>
+  <p class="sec-desc">这一阶段决定你后面是「跟着敲代码」还是「真的懂」。目标不是成为硬件工程师，而是：<b>看得懂原理图、算得出参数、量得到波形、写得出能落地的 C</b>。</p>
+
+  <div class="chapter open" data-ch="1-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">1.1 嵌入式电子元器件 <span class="tag">4 天 · 动手为主</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>电阻</b>：阻值/精度/功率/封装（0402、0603、0805）；上拉与下拉的取值逻辑；分压与限流计算；0Ω 电阻的作用（跳线、单点接地）。</li>
+        <li><b>电容</b>：陶瓷/电解/钽电容的区别；<b>去耦（decoupling）与旁路</b>为什么每个芯片电源脚都要配 0.1µF；「104」「106」的读数法；耐压与降额。</li>
+        <li><b>电感与磁珠</b>：储能（DC-DC 必备）、抑制高频噪声；DCR 与饱和电流。</li>
+        <li><b>二极管</b>：整流、续流、稳压（齐纳）、肖特基（低压降）、TVS（防浪涌）、LED 限流电阻公式 <b>R=(Vcc−Vf)/I</b>。</li>
+        <li><b>三极管</b>：NPN/PNP 作开关，饱和区与放大区的判据，基极限流电阻怎么算。</li>
+        <li><b>MOS 管</b>：NMOS 低边开关 / PMOS 高边开关，栅极电荷与驱动，Rds(on) 选型；为什么电机要用 MOS 而不是三极管。</li>
+        <li><b>晶振与时钟</b>：无源晶振 + 两个负载电容的匹配；有源晶振；复位电路（RC + 按键）。</li>
+        <li><b>电源</b>：LDO 与 DC-DC 的取舍（效率 vs 噪声）、压差、发热估算。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>面包板点亮 LED，用三种阻值对比亮度，实测电流验证限流公式。</li>
+        <li>三极管驱动继电器 / 蜂鸣器；MOS 管驱动小直流电机（一定要加续流二极管）。</li>
+        <li>RC 低通滤波，用示波器看方波被「磨圆」的过程，改 R/C 看截止频率变化。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>给你一张陌生模块的原理图，能指出电源路径、去耦电容、上拉电阻、限流电阻各自的作用，并说出任意一个电阻为什么是这个阻值。</div>
+    </div>
+  </div>
+
+  <div class="chapter open" data-ch="1-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">1.2 C 语言精讲（按你的基础做减法） <span class="tag">8 天 · 只补底层</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <p style="margin:10px 0 0;color:#5b6472;font-size:13.5px">尚硅谷《C 语言核心技术》覆盖很全（常量变量 → 分支循环 → 数组指针 → 函数 → 预处理 → 内存存储）。你有编程基础，<b>跳过语法讲解，只精读下列六块</b>，其余用「写代码时查漏」的方式补。</p>
+      <h4>必须精读的六块</h4>
+      <ul>
+        <li><b>指针</b>：指针与数组的退化关系、二级指针、函数指针与回调、指针运算与步长、野指针与 NULL 判定。嵌入式里所有寄存器操作、驱动回调都靠它。</li>
+        <li><b>内存布局</b>：栈 / 堆 / .data / .bss / 常量区 / 代码区，各自放什么、什么时候被清零。<b>这是理解「全局变量为什么初值为 0、局部变量为什么不一定是 0」的唯一途径</b>。</li>
+        <li><b>位运算</b>：置位 <code>|=</code>、清零 <code>&amp;=~</code>、取反 <code>^=</code>、移位、提取字段。这一块要练到「看代码就知道在操作哪个 bit」。</li>
+        <li><b>结构体 / 联合体 / 位域 / 内存对齐</b>：协议报文解析、寄存器映射全靠它；<code>#pragma pack</code> 与对齐的坑。</li>
+        <li><b>static / const / volatile / extern</b>：四个关键字在嵌入式里的真实语义（volatile 为什么必须加在寄存器变量和中断共享变量上）。</li>
+        <li><b>预处理</b>：宏与函数的取舍、条件编译（<code>#ifdef DEBUG</code>）、头文件卫士、<code>##</code> 拼接。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>用纯 C 写一个<b>环形缓冲区（ring buffer）</b>，支持满/空判定，用于串口收数据。</li>
+        <li>用函数指针数组实现一个<b>简易状态机</b>（比如按键的短按/长按/双击）。</li>
+        <li>用宏封装一组寄存器位操作，然后在 <code>gcc -S</code> 下看汇编，确认自己写的位运算被编译成了什么。</li>
+        <li>故意制造一次数组越界，观察栈被破坏后的诡异现象（比看十页书都深刻）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能手写 ring buffer 与位操作宏；能解释 <code>volatile</code> 在中断服务函数里的必要性；能画出自己程序的 .map 内存分布。</div>
+      <div class="box warn"><b>提醒：</b>C 语言的「考试型知识」（如复杂的指针表达式解析）不必深究，面试偶尔问，工作中极少用。把时间投给位运算和内存。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="1-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">1.3 数字电路：从零搭建计算机 <span class="tag">4 天 · 建立世界观</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>数制与编码：二进制、补码（为什么用补码做减法）、BCD、ASCII、格雷码。</li>
+        <li>逻辑门与布尔代数：与或非、异或、德摩根定律；用真值表化简。</li>
+        <li>组合逻辑：半加器 → 全加器 → 多位加法器、译码器、编码器、多路选择器。</li>
+        <li>时序逻辑：RS/D 触发器 → 寄存器 → 计数器 → 分频器；建立/保持时间的概念。</li>
+        <li>总线、时钟、复位、三态门：为什么多个器件能共用一根数据线。</li>
+        <li>从门电路到 CPU：ALU、指令寄存器、程序计数器、取指-译码-执行周期。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>用 Logisim 搭一个 4 位加法器，再用触发器搭一个 4 位计数器，接上七段数码管显示。</li>
+        <li>把「8 个 LED 轮流亮」拆解成「移位寄存器 + 时钟」模型，理解代码里的循环延时究竟在替代什么硬件。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能用自己的话讲清「一个电平变化怎么变成一条指令的执行」；看到 <code>GPIOA-&gt;ODR |= 1&lt;&lt;5</code> 能对应到硬件上的哪个门、哪个触发器。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="1-4">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">1.4 原理图 &amp; PCB 设计 <span class="tag">5 天 · 有产出</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <p style="margin:10px 0 0;color:#5b6472;font-size:13.5px">尚硅谷这套课的特色是「每个元件都讲原理、每根线都说清为什么」，最终完成一块多层板实战。自学时按下面顺序走，最后一定要打样一次。</p>
+      <h4>关键知识点</h4>
+      <ul>
+        <li>工具：嘉立创 EDA（免费、库全、可直接下单打样）；元件库 / 封装库 / 3D 预览。</li>
+        <li>原理图：电源树（Type-C 取电 → 自恢复保险丝 → 滤波 → LDO 5V→3.3V）、去耦网络、复位电路、BOOT 选择、SWD 调试口、晶振。</li>
+        <li>PCB：层叠设计、布局优先级（电源 → 晶振 → 接口 → 高速）、布线线宽与载流（1oz 铜约 1mm/1A 的经验值）、地平面完整性与回流路径、丝印规范。</li>
+        <li>生产文件：BOM、坐标文件（Pick&amp;Place）、Gerber；打样与 SMT 贴片下单流程。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>画一块 <b>STM32 最小系统板</b>（含 USB 供电、SWD、复位、BOOT、用户 LED、按键）。</li>
+        <li>打样 5 片，自己用烙铁/风枪焊 1 片，上电、烧录、点灯。<b>这一步是整个阶段的高光时刻，也是最有用的简历素材。</b></li>
+      </ul>
+      <div class="box ok"><b>验收：</b>板子能烧录并点亮 LED；能讲清每个模块为什么这样连；能用万用表排查一次焊接虚焊。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="1-5">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">1.5 万用表 / 直流电源 / 示波器 / 逻辑分析仪 <span class="tag">3 天 · 调试基本功</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>万用表</b>：通断档查线路、直流电压档查供电、电流档查功耗（注意串接与量程）、二极管档测 PN 结。</li>
+        <li><b>直流电源</b>：先设电压再开输出、<b>限流保护</b>（调试新板子必开，防止冒烟）、看电流判断是否短路。</li>
+        <li><b>示波器</b>：探头 ×1/×10 的区别与补偿、时基与垂直档、触发方式（边沿/电平）、测 PWM 频率与占空比、用 Math 做差、看串口波形。</li>
+        <li><b>逻辑分析仪</b>：采样率与通道数、协议解码（UART/I2C/SPI），抓 I2C 的 start/ack/stop。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>示波器测 STM32/51 输出的 PWM，读出频率与占空比，再改代码验证。</li>
+        <li>逻辑分析仪抓一次 I2C 读 EEPROM 的完整时序，对照数据手册逐个字节核对。</li>
+        <li>用电源的电流读数判断板子是否短路（短接 3.3V 与 GND 试一次，看到限流触发）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>遇到「板子不亮」时，能按「供电 → 复位 → 时钟 → 程序」四步顺序用仪器定位，而不是盲目换元件。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 阶段二 ============ -->
+<section id="s2">
+  <h2 class="sec"><span class="no">2</span>阶段二 · 51 单片机开发（约 3 周）</h2>
+  <p class="sec-desc">为什么 2026 年还要学 51？不是因为 51 有用，而是因为它<b>结构简单、没有库、全部寄存器裸奔</b>，能把「外设—寄存器—现象」这条因果链走通一遍。走通之后上 STM32，你只是换了一套更复杂的寄存器，逻辑是同一套。</p>
+
+  <div class="chapter open" data-ch="2-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.1 8051 架构、最小系统与开发环境 <span class="tag">4 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>8051 内部结构：CPU、ROM/RAM、SFR（特殊功能寄存器）、时序（机器周期 = 12 个时钟）。</li>
+        <li>最小系统：电源、晶振（11.0592MHz 为什么是串口常用值）、复位电路、EA 引脚。</li>
+        <li>Keil C51 工程创建、编译、烧录（STC-ISP）、<code>sbit</code> / <code>sfr</code> 的用法。</li>
+        <li>IO 口结构：准双向口的弱上拉，为什么 51 的 P0 口要外接上拉电阻。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>点亮第一个 LED（软件延时），再用 <code>_nop_()</code> 与定时器对比延时的准确性。</li>
+        <li>按键输入：软件消抖（延时 10ms 再判断）与硬件消抖（RC）对比。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能说清「写 1 到 P1 寄存器 → 引脚变高 → LED 亮」中间每一步发生在哪个硬件上。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="2-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.2 中断系统与定时器/计数器 <span class="tag">4 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>中断源、中断向量、中断优先级、中断嵌套；<code>interrupt n</code> 关键字。</li>
+        <li>外部中断 INT0/INT1 的触发方式（电平/边沿）。</li>
+        <li>定时器 T0/T1 的四种工作模式、初值计算、溢出与自动重装。</li>
+        <li>用定时器产生精准延时与 PWM（软件 PWM 与硬件 PWM 的差别）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>定时器中断实现 1 秒精准闪烁，并用秒表或逻辑分析仪核对误差。</li>
+        <li>按键外部中断控制流水灯启停；中断里只置标志，主循环处理逻辑（<b>这个习惯要一开始就养成</b>）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能解释「为什么中断服务函数里不要做延时和打印」；能算出任意定时时长的初值。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="2-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.3 串口通信与显示（数码管 / LCD1602） <span class="tag">4 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>UART 帧格式、波特率计算（11.0592MHz 的妙处）、TTL 与 RS232/RS485 电平差异。</li>
+        <li>串口收发：轮询与中断两种方式；<code>printf</code> 重定向到串口。</li>
+        <li>数码管：共阴/共阳、段码表、<b>动态扫描与视觉暂留</b>、限流电阻。</li>
+        <li>LCD1602：指令集、初始化时序、忙标志判断、显示自定义字符。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>串口助手双向通信：上位机发指令控制 LED，单片机回传状态。</li>
+        <li>数码管做一个 60 秒倒计时；LCD1602 显示温湿度（配合后续传感器）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能独立排查串口乱码（波特率 / 时钟 / 电平 / 接线四类原因）。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="2-4">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.4 总线与常用外设：I2C / SPI / 单总线 / AD-DA <span class="tag">5 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>I2C</b>：两根线（SCL/SDA）、开漏 + 上拉、起始/停止/应答时序、7 位地址；读写 AT24C02。</li>
+        <li><b>SPI</b>：四线（SCK/MISO/MOSI/CS）、四种模式（CPOL/CPHA）、全双工；读写 W25Qxx Flash。</li>
+        <li><b>单总线</b>：DS18B20 的复位/存在脉冲、ROM 命令、温度转换时序（微秒级延时是难点）。</li>
+        <li><b>AD/DA</b>：ADC0809 或内部 ADC 的转换原理、参考电压、分辨率；DAC 输出正弦波。</li>
+        <li><b>红外 NEC 协议</b>：38kHz 载波、引导码、地址/数据反码。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>软件模拟 I2C 完整读写 EEPROM，断电后数据不丢。</li>
+        <li>DS18B20 采集温度并显示到 LCD；红外遥控解码并在串口打印键值。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>不看教程能凭数据手册手写出 I2C 读写单个字节的时序函数；用逻辑分析仪抓波形自查。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="2-5">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.5 电机驱动与 PWM 控制 <span class="tag">3 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>直流电机：H 桥原理、正反转、PWM 调速、续流保护。</li>
+        <li>步进电机：四相八拍、细分驱动、丢步原因。</li>
+        <li>舵机：20ms 周期、0.5–2.5ms 脉宽对应角度。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>L298N 驱动小车前进/后退/差速转向；舵机云台扫掠。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能算清「电池电压 → 电机电流 → 驱动芯片发热 → 是否要加散热片」这条链。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="2-6">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">2.6 阶段项目：51 智能小车 <span class="tag">1 周 · 阶段产出</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>功能要求</h4>
+      <ul>
+        <li>红外/超声波避障 + 循迹（光电对管）+ 蓝牙遥控（HC-05）+ OLED 显示状态。</li>
+        <li>用<b>状态机</b>组织代码，而不是一堆 <code>if-else</code>；每个模块一个 <code>.c/.h</code>。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>小车能连续跑 10 分钟不死机；能画出自己的软件架构图；代码上传 GitHub 并写 README（含接线表与演示视频）。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 阶段三 ============ -->
+<section id="s3">
+  <h2 class="sec"><span class="no">3</span>阶段三 · STM32 处理器开发（约 8 周）</h2>
+  <p class="sec-desc">这是<b>整个体系的核心，也是就业岗位最密集的一层</b>。尚硅谷这套 STM32 教程公开目录共 194 集，分「基础篇 + 进阶篇」，且<b>寄存器与 HAL 库双线并行</b>——这个设计要严格照做，不要偷懒只学 HAL。</p>
+
+  <div class="callout tip">
+    <b>贯穿全阶段的学习方法（照做能省一半时间）</b>
+    <ul>
+      <li><b>每个外设走三遍</b>：① 看原理框图与数据手册寄存器 → ② 用寄存器手写一遍 → ③ 用 HAL 库再写一遍并对照源码。三遍之后，这个外设才是你的。</li>
+      <li><b>每写完一个外设，用逻辑分析仪/示波器验证一次</b>，别只信「灯亮了」。同一段代码在不同板子上表现不同，只有波形不会骗人。</li>
+      <li><b>建立自己的「寄存器笔记」</b>：每个外设记录「我用到的 3–5 个寄存器 + 每个位的含义」，面试时这就是你的底气。</li>
+    </ul>
+  </div>
+
+  <div class="chapter open" data-ch="3-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.1 概述、ARM 内核与开发工具链 <span class="tag">3 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>ARM Cortex-M 内核家族（M0/M3/M4/M7）差异；STM32 命名规范（型号每一段代表什么）。</li>
+        <li>开发方式：寄存器 / 标准库 / HAL 库 + CubeMX；三者的取舍。</li>
+        <li>工具链：Keil MDK 安装与破解风险、<b>Keil + VSCode 组合开发</b>（编辑在 VSCode，编译下载在 Keil）、ST-Link / DAP-Link、STM32CubeProgrammer。</li>
+        <li>最小系统构成：电源、复位、BOOT0/1、晶振、SWD 接口。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>搭建 Keil + VSCode + ST-Link 环境，烧录官方例程；用 STM32CubeProgrammer 读一次芯片信息。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>拿到任意一块 STM32 板，能在 30 分钟内让 LED 闪起来（不依赖现成工程模板）。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.2 GPIO 与点灯（寄存器 → 宏 → 位运算三级进化） <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <p style="margin:10px 0 0;color:#5b6472;font-size:13.5px">这一章的价值不在「点灯」，而在<b>代码质量的四级进化</b>——尚硅谷这套课的编排就是按这个逻辑走的，务必逐级手写一遍。</p>
+      <h4>关键知识点</h4>
+      <ul>
+        <li>GPIO 八种工作模式：推挽输出 / 开漏输出 / 复用推挽 / 复用开漏 / 上拉输入 / 下拉输入 / 浮空输入 / 模拟输入。<b>能说出每种模式对应什么外设场景</b>（如 I2C 必须开漏、ADC 必须模拟）。</li>
+        <li>GPIO 寄存器组：MODER、OTYPER、OSPEEDR、PUPDR、IDR、ODR、BSRR（为什么 BSRR 比 ODR 好——原子操作）。</li>
+        <li>代码进化路径：① 直接写地址 → ② 宏定义寄存器名 → ③ 位运算操作 → ④ 宏定义位掩码（可读性）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>同一份「流水灯」写四个版本，对比可读性与可维护性。</li>
+        <li>用 BSRR 实现原子置位/复位，与 <code>ODR |=</code> 对比在多中断场景下的差异。</li>
+        <li>课堂练习：往返流水灯、按键控制流水灯方向。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能手写 GPIO 初始化（不开 CubeMX），并解释每个寄存器为什么这样配。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.3 系统架构、时钟系统与 HAL 库入门 <span class="tag">5 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>总线架构：AHB / APB1 / APB2 各自挂哪些外设、为什么分域（速度与功耗）。</li>
+        <li>时钟树：HSI/HSE → PLL → SYSCLK → AHB 分频 → APB 分频；<b>为什么串口波特率算不准要先查时钟</b>。</li>
+        <li>CubeMX 图形化配置时钟，读懂生成的 <code>SystemClock_Config()</code> 源码。</li>
+        <li>HAL 库结构：<code>HAL_Init</code>、<code>HAL_GPIO_WritePin</code>、句柄 <code>GPIO_InitTypeDef</code>、<code>__weak</code> 回调机制。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>用 CubeMX 生成工程并点灯，然后逐行读懂 <code>main.c</code> 的初始化顺序。</li>
+        <li>故意把 HSE 配错，观察串口乱码 —— 建立「时钟是万恶之源」的直觉。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能画出自己板子的完整时钟树并标注每一级频率；能说清 APB1 与 APB2 上各挂了什么。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-4">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.4 中断系统：NVIC / EXTI / 优先级 <span class="tag">5 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>中断体系：异常向量表、抢占优先级与子优先级、优先级分组（NVIC_PriorityGroup）。</li>
+        <li>EXTI 原理：边沿检测、屏蔽寄存器、挂起寄存器；中断与事件的区别。</li>
+        <li><b>中断服务函数的三条铁律</b>：短、不阻塞、不调用不可重入函数；共享变量加 volatile。</li>
+        <li>中断与主循环的协作：标志位 + 主循环处理（前后台系统）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>按键外部中断（寄存器 + HAL 两种实现），配套做硬件消抖与软件消抖。</li>
+        <li>两个中断抢同一个串口，观察优先级反转与数据丢失，然后用临界区修复。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能解释「为什么中断里不能 <code>printf</code>」「为什么优先级分组一旦设定，中途不能随便改」。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-5">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.5 USART 串口通信（轮询 / 中断 / DMA 三种方式） <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>串行 vs 并行、单工/半双工/全双工、同步 vs 异步；UART 帧结构与校验。</li>
+        <li>USART 功能框图：波特率发生器（BRR 的计算）、发送/接收移位寄存器、状态寄存器。</li>
+        <li>三种收发方式：轮询（阻塞）、中断（逐字节）、DMA（整块）——<b>各自适合什么数据量</b>。</li>
+        <li>变长数据接收：空闲中断（IDLE）+ DMA 是最常用方案，务必掌握。</li>
+        <li><code>printf</code> 重定向：<code>fputc</code> 重写（Keil）与 <code>_write</code>（GCC）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>实现一套带帧头/长度/校验的串口协议，能收发变长数据包。</li>
+        <li>用 DMA + IDLE 中断接收不定长数据，配环形缓冲区（复用阶段一写的 ring buffer）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能独立写出一套可靠的串口收包状态机；能定位「丢包」是发生在硬件、中断还是缓冲层。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-6">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.6 I2C：软件模拟 + 硬件外设 + EEPROM 实战 <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>I2C 协议细节：起始/停止条件、时钟拉伸、应答/非应答、重复起始。</li>
+        <li><b>软件模拟 I2C</b>（GPIO 翻转）：为什么工程里大量用软件模拟（引脚灵活、避坑）。</li>
+        <li>M24C02 EEPROM：器件地址、页写、连续读、写周期等待（ACK 轮询）。</li>
+        <li>硬件 I2C 外设：CR1/CR2/DR/SR 寄存器、事件驱动流程（EV5/EV6/EV8）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>软件模拟 I2C 读写 EEPROM 单字节与多字节，用逻辑分析仪验证时序。</li>
+        <li>硬件 I2C 实现同样功能，对比两者的坑（硬件 I2C 卡死是常见面试题）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能处理 EEPROM 页边界（跨页写入必须拆分）；能解释硬件 I2C 卡死的原因与恢复方法（发送 9 个时钟脉冲）。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-7">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.7 定时器全家桶：SysTick / 基本 / 通用 / 高级 <span class="tag">1.5 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>SysTick</b>：24 位递减计数器、<code>HAL_Delay</code> 的本质、用 SysTick 做非阻塞延时（<code>HAL_GetTick</code>）。</li>
+        <li><b>基本定时器</b>：时基单元（PSC 预分频 + ARR 重装载）、更新中断。</li>
+        <li><b>通用定时器</b>：计数模式（向上/向下/中央对齐）、PWM 输出（CCR 与占空比关系）、输入捕获（测频率/脉宽）、PWM 输入模式（同时测频率与占空比）、从模式与触发。</li>
+        <li><b>高级定时器</b>：互补输出、死区时间、刹车输入 —— <b>电机控制与电源的必修</b>。</li>
+        <li>PWM 的工程应用：LED 调光（人眼非线性 → 伽马校正）、舵机、蜂鸣器、电机调速。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>SysTick 实现「三个 LED 不同频率闪烁」而不使用任何 <code>HAL_Delay</code>（非阻塞思维训练）。</li>
+        <li>PWM 呼吸灯 + 按键调节 LCD 背光；输入捕获测外部方波频率，误差 &lt; 1%。</li>
+        <li>高级定时器输出带死区的互补 PWM（示波器双通道验证死区）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能手算任意频率/占空比的 PSC 与 ARR；能解释「为什么测高频要用输入捕获而不是轮询」。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-8">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.8 DMA：让 CPU 从搬运工变回工程师 <span class="tag">4 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>DMA 控制器结构：通道、请求映射、优先级、传输方向、循环模式、增量模式。</li>
+        <li>关键寄存器：CCR、CNDTR、CPAR、CMAR；传输完成/半完成/错误中断。</li>
+        <li>典型场景：ADC 多通道循环采样、串口不定长接收、SPI 刷屏、内存到内存搬运。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>DMA 把 Flash 里的字库搬到 RAM，再 DMA 刷到 LCD（对比不用 DMA 的帧率）。</li>
+        <li>ADC + DMA + 定时器触发，做 1kHz 连续采样并在屏上画波形。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能说清「DMA 传输时 CPU 在干什么」；能排查 DMA 不触发的三类原因（时钟未开 / 请求映射错 / 传输长度未重装）。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-9">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.9 ADC：逐次逼近型与采集实战 <span class="tag">4 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>逐次逼近型 ADC 工作原理（比较器 + DAC 逐位逼近）；采样时间与信号源内阻的关系。</li>
+        <li>分辨率、参考电压、量化误差、有效位数；单端/差分输入。</li>
+        <li>规则通道 vs 注入通道、扫描模式、连续转换、外部触发。</li>
+        <li>软件滤波：滑动平均、中值滤波、一阶滞后滤波 —— <b>实际工程必用</b>。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>单通道采集电位器电压，换算成实际电压值并显示，误差 &lt; 1%。</li>
+        <li>多通道扫描 + DMA，同时采集 3 路，各自做滑动平均。</li>
+        <li>用 NTC 热敏电阻做温度采集（含分压计算与查表/公式换算）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能解释「为什么采样时间设太短会导致读数跳动」；能自己设计一套滤波方案并说明为什么这样选。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-10">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.10 SPI 通信与 W25Q Flash 读写 <span class="tag">5 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>SPI 四线与四种模式（CPOL/CPHA），主从设备如何匹配模式；菊花链与多从机片选。</li>
+        <li>W25Q32 命令集：读 ID、读状态、页编程（256 字节）、扇区擦除、块擦除、写使能。</li>
+        <li>Flash 的三个铁律：<b>写前必擦、擦除按扇区、写按页</b>；寿命与磨损均衡。</li>
+        <li>软件模拟 SPI 与硬件 SPI 外设的取舍。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>读 Flash ID 验证通信；实现「按扇区擦除 + 按页写入 + 任意地址读」的完整驱动。</li>
+        <li>做一个简易文件系统（配置区/字库区/日志区），断电重启数据不丢。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能自研一套「参数存储模块」（带 CRC 校验与双备份），这是真实产品必备组件。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-11">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.11 存储器映射、寄存器本质、FSMC 与 LCD 显示 <span class="tag">1.5 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>存储器和寄存器：Flash / SRAM / EEPROM 的区别；STM32 存储器映射表（0x0800_0000 是什么）。</li>
+        <li><b>寄存器的本质 = 特定地址上的一段内存</b>；<code>*(volatile uint32_t*)0x40020014</code> 为什么能控制硬件。</li>
+        <li>FSMC 原理：外部存储器地址映射、读写时序（地址建立/数据保持）、SRAM 扩展。</li>
+        <li>LCD：接口类型（8080 并口 / SPI / RGB / MIPI）、控制器（ILI9341 等）、显存与刷屏方式。</li>
+        <li>字库与图形：ASCII 字库、汉字点阵、图片取模、基本图形算法（画点/线/圆）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>FSMC 扩展 SRAM 并读写测试；FSMC 驱动 LCD，依次实现：刷底色 → 显示字符 → 显示汉字 → 显示图片 → 画圆。</li>
+        <li>做一个「系统信息面板」：显示 CPU 主频、运行时间、温度、Flash 使用率。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能解释「为什么给 LCD 写数据只要给某个地址赋值」；能自己取模一张图片并显示。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-12">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.12 物联网与高性能外设：CAN / Modbus / WiFi / 4G / LoRa / 蓝牙 / GPS <span class="tag">2 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <p style="margin:10px 0 0;color:#5b6472;font-size:13.5px">对应尚硅谷「嵌入式 STM32 物联网 &amp; 高性能实战」这一段。它决定了你能不能做「产品」而不只是「实验板」。</p>
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>CAN</b>：差分总线、仲裁机制、报文格式、位定时与采样点；CAN 收发器接线与终端电阻。</li>
+        <li><b>Modbus RTU</b>：功能码、寄存器地址、CRC16 校验 —— 工业设备最常见的对接协议。</li>
+        <li><b>WiFi（ESP8266/ESP32）</b>：AT 指令、透传、MQTT 上云（阿里云/腾讯云/OneNET）。</li>
+        <li><b>4G Cat.1 / NB-IoT</b>：AT 指令流程、SIM 卡、TCP 长连接、断线重连。</li>
+        <li><b>LoRa</b>：扩频参数（SF/BW/CR）、点对点与网关、低功耗唤醒。</li>
+        <li><b>BLE</b>：GATT 服务与特征值、广播与连接、用手机 App 调试。</li>
+        <li><b>GPS/北斗</b>：NMEA 报文解析、定位精度、坐标系转换。</li>
+        <li><b>低功耗设计</b>：Sleep/Stop/Standby 模式、唤醒源、功耗测量方法。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>两块板子 CAN 互通，跑通 Modbus 从机，用上位机 Modbus Poll 读寄存器。</li>
+        <li>ESP8266 接入 MQTT，手机端能看到温度曲线并可下发控制命令。</li>
+        <li>GPS 模块解析经纬度并显示到 LCD（做「宠物定位器/车载终端」的原型）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能独立完成「传感器 → MCU → 无线模组 → 云平台 → 手机」全链路，并写出通信协议文档。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="3-13">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">3.13 阶段项目：带屏的多参数采集终端 <span class="tag">1 周 · 阶段产出</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>功能要求（把前面所有外设串起来）</h4>
+      <ul>
+        <li>ADC 采集温度/电压 → 定时器定时触发 → DMA 搬运 → 软件滤波 → LCD 显示曲线。</li>
+        <li>按键中断切换页面；Flash 保存参数（阈值、校准值）；串口输出日志；WiFi 上报云端。</li>
+        <li>代码分层：BSP 层（板级驱动）/ 中间层（协议、滤波）/ 应用层（业务逻辑）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>连续运行 24 小时不死机、不丢数据；能画出完整的软硬件框图；能讲清每个外设的初始化顺序与依赖关系。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 阶段四 ============ -->
+<section id="s4">
+  <h2 class="sec"><span class="no">4</span>阶段四 · FreeRTOS 与工程进阶（约 4 周）</h2>
+  <p class="sec-desc">从「一个大循环 + 一堆标志位」升级到「多任务 + 任务间通信」，这是<b>从学生作品走向产品代码</b>的分水岭。之后的 BootLoader / LVGL / 加密三块，决定你的作品能不能算「产品级」。</p>
+
+  <div class="chapter open" data-ch="4-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">4.1 FreeRTOS 内核与任务管理 <span class="tag">5 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>为什么需要 RTOS：前后台系统的三个死穴（实时性差、任务耦合、难扩展）。</li>
+        <li>任务三要素：任务函数、优先级、栈空间；任务状态机（运行/就绪/阻塞/挂起）。</li>
+        <li>调度器：抢占式 vs 时间片；<code>vTaskDelay</code> 与 <code>vTaskDelayUntil</code> 的区别（周期性任务的正确写法）。</li>
+        <li>任务创建/删除/挂起/恢复；空闲任务与钩子函数；<b>栈溢出检测的两种方法</b>。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>把阶段三的「采集终端」改造成 4 个任务：采集 / 显示 / 通信 / 按键。</li>
+        <li>故意把某个任务栈设小，触发栈溢出，观察 HardFault 并学会用栈水位排查。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能说清「为什么 <code>vTaskDelay(1)</code> 不等于 1ms」「优先级高的任务一直跑，低优先级任务为什么饿死」。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="4-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">4.2 任务间通信与同步：队列 / 信号量 / 互斥量 / 事件组 / 任务通知 <span class="tag">6 天</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>队列</b>：值拷贝机制、阻塞超时、队列集；生产者-消费者模型。</li>
+        <li><b>二值/计数信号量</b>：同步与资源计数；中断中必须用 <code>FromISR</code> 版本并处理 <code>xHigherPriorityTaskWoken</code>。</li>
+        <li><b>互斥量</b>：优先级继承如何解决优先级翻转；递归互斥量。</li>
+        <li><b>事件标志组</b>：多事件「与/或」等待。</li>
+        <li><b>任务通知</b>：最轻量的通信方式，什么时候可以替代信号量与队列。</li>
+        <li>临界区 <code>taskENTER_CRITICAL</code> 与关中断 <code>portDISABLE_INTERRUPTS</code> 的区别与代价。</li>
+        <li>软件定时器：守护任务、单次/周期、回调里不能阻塞。</li>
+        <li>内存管理：heap_1 ~ heap_5 的差异、碎片问题、静态创建。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>用队列实现「串口收包 → 解析任务」的解耦。</li>
+        <li>构造一次优先级翻转（低优先级任务持锁被中优先级抢占），再用互斥量修复并观测效果。</li>
+        <li>事件组实现「按键 + 定时 + 通信」三者任一触发唤醒处理任务。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能画出自己项目的任务与通信拓扑图；能解释「什么时候该用队列，什么时候用任务通知」。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="4-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">4.3 BootLoader / IAP / OTA 远程升级 <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>IAP vs ICP vs ISP；Flash 分区规划（BootLoader 区 / APP 区 / 备份区 / 参数区）。</li>
+        <li>跳转机制：关中断 → 重设 MSP → 设置向量表偏移（<code>SCB-&gt;VTOR</code>）→ 跳到复位向量。</li>
+        <li>APP 链接地址与中断向量表重映射（为什么 APP 不设 VTOR 会进 HardFault）。</li>
+        <li>升级通道：串口 / CAN / LoRa / WiFi；升级包格式（包头 + 长度 + CRC + 数据）。</li>
+        <li><b>防变砖设计</b>：双 Bank / 标志位回滚 / 校验失败自动回退 / 断电续传。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>实现串口 OTA：上位机发固件包 → 写入备份区 → 校验 → 重启进 BootLoader 搬运 → 跳新 APP。</li>
+        <li>升级过程中拔电，验证回滚逻辑能救回旧固件。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能讲清一次完整 OTA 的 8 个步骤与每一步失败后的处理；能解释「为什么升级完必须软件复位」。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="4-4">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">4.4 LVGL 图形界面（你的主场）+ STM32 加密 <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <div class="box" style="margin-top:10px"><b>为什么这块对你特别重要：</b>LVGL 的布局、样式、事件、动画，和你在前端做的组件化、CSS 样式、事件绑定是<b>同一套思维</b>。带屏交互设备（智能家居面板、车载中控、仪表、医疗设备 UI）正缺「既懂嵌入式又懂界面」的人，这是你最容易做出差异化的方向。</div>
+      <h4>关键知识点</h4>
+      <ul>
+        <li>PC 模拟器（VSCode/CodeBlocks）先跑起来 —— <b>先在电脑上做 UI，再移植到板子，效率高 10 倍</b>。</li>
+        <li>对象树与父子关系、屏幕（screen）、样式（style）与状态、事件回调、动画（anim）。</li>
+        <li>常用控件：label / button / slider / switch / chart / table / list / keyboard。</li>
+        <li>布局：flex 与 grid（再一次，和前端极度相似）。</li>
+        <li>字体：中文字体裁剪与转换（<code>lv_font_conv</code>）、外部字库（把字库放 Flash，省 RAM）。</li>
+        <li>移植：显示驱动（flush_cb）、输入驱动（触摸）、时基、双缓冲与 DMA 刷屏。</li>
+        <li><b>STM32 加密</b>：读保护 RDP Level 1/2、唯一 ID 加密、程序校验、防抄板思路。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>在模拟器上做一个「智能家居控制面板」（3 个页面 + 图表 + 滑动开关），再移植到 STM32 + LCD + 触摸屏。</li>
+        <li>开启 RDP Level 1，验证 SWD 无法读出固件。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>板子上跑着自己设计的 UI，触摸流畅无撕裂（帧率 ≥ 30fps）。<b>这个项目一定要录视频、放简历首页。</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 阶段五 ============ -->
+<section id="s5">
+  <h2 class="sec"><span class="no">5</span>阶段五 · 嵌入式 Linux 开发（约 10 周）</h2>
+  <p class="sec-desc">难度最高、周期最长，但天花板也最高。尚硅谷这段分「Ubuntu 快速上手 → Linux 应用层开发（公开目录 130 集）→ 系统移植 → 驱动开发」。<b>如果你只走 MCU 路线，这一阶段可以砍掉；如果想做 Linux 岗或高阶产品，这是必过关卡。</b></p>
+
+  <div class="callout note">
+    <b>先说实话：这一段的真实难点不是写代码，而是「环境」</b>
+    <ul>
+      <li>交叉编译工具链、U-Boot、内核、设备树、根文件系统 —— 任何一环版本不匹配，都能让你卡上一整周。</li>
+      <li>建议<b>严格跟着一套教程 + 一块官方支持好的板子（正点原子 / 野火）走</b>，不要自己拼版本。遇到问题优先去板厂论坛搜同型号，而不是全网乱搜。</li>
+    </ul>
+  </div>
+
+  <div class="chapter" data-ch="5-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">5.1 Ubuntu 快速上手与 Shell <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>虚拟机安装与硬件设置、Ubuntu 镜像安装、网络配置（NAT/桥接）、SSH 远程登录、xftp 文件传输。</li>
+        <li>文件系统「一切皆文件」、目录结构、权限（rwx 与 chmod/chown）、软硬链接。</li>
+        <li>常用命令：find / grep / awk / sed / tar / ps / top / df / du / ln / mount。</li>
+        <li>软件管理：apt 源、安装/卸载/依赖；环境变量（PATH、profile 与 bashrc）。</li>
+        <li>用户与用户组管理、进程管理（前后台、<code>nohup</code>、<code>kill</code>）。</li>
+        <li>Shell 脚本：变量、条件判断、循环、函数、<code>read</code> 交互、定时任务 crontab。</li>
+        <li>Vim 三种模式与常用操作（至少会改配置、批量替换）。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>写一个 Shell 脚本：每天备份指定目录 + 按日期命名 + 保留最近 7 份 + 输出日志。</li>
+        <li>用 SSH + scp 在你的 Windows 和 Ubuntu 之间传文件，全程不插 U 盘。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能在纯命令行下完成「装环境 → 传文件 → 跑程序 → 看日志」全流程，不需要图形界面。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="5-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">5.2 Linux 应用层开发（130 集体系，按 7 个模块推进） <span class="tag">4 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>模块一 · C 开发与构建（约 1 周）</h4>
+      <ul>
+        <li>POSIX 标准；GCC 编译四阶段（预处理 / 编译 / 汇编 / 链接）；静态库与动态库。</li>
+        <li><b>Makefile</b>：变量、自动推导、伪目标、模式规则、多目录工程。这是 Linux 开发的「水电煤」。</li>
+        <li>GDB 调试：断点、单步、查看内存、core dump 分析；<code>valgrind</code> 查内存泄漏。</li>
+      </ul>
+
+      <h4>模块二 · 文件 IO 与系统调用（约 3 天）</h4>
+      <ul>
+        <li>标准 C 库：<code>fopen/fread/fwrite/fprintf/fscanf</code>；缓冲机制。</li>
+        <li>系统调用：<code>open/read/write/close/lseek/stat</code>；<b>文件描述符</b>的本质（进程 fd 表 → 系统打开文件表 → inode）。</li>
+        <li>标准输入输出错误 stdin/stdout/stderr 与重定向。</li>
+      </ul>
+
+      <h4>模块三 · 进程（约 4 天）</h4>
+      <ul>
+        <li><code>fork</code> 创建子进程（写时复制）、<code>execve</code> 替换映像、<code>waitpid</code> 回收。</li>
+        <li>进程树、孤儿进程、僵尸进程的成因与处理。</li>
+        <li>守护进程（daemon）的创建步骤：fork → setsid → 重定向标准流 → 改工作目录。</li>
+      </ul>
+
+      <h4>模块四 · 进程间通信 IPC（约 3 天）</h4>
+      <ul>
+        <li>匿名管道、有名管道（FIFO）、共享内存（<code>shm_open/mmap</code>）、消息队列、信号（signal/sigaction）。</li>
+        <li>各自的适用场景与性能对比；共享内存为什么要配信号量做同步。</li>
+      </ul>
+
+      <h4>模块五 · 线程与同步（约 1 周）</h4>
+      <ul>
+        <li><code>pthread_create/join/detach/cancel</code>；线程与进程的本质区别（共享地址空间）。</li>
+        <li>竞态条件；<b>互斥锁、读写锁、自旋锁、条件变量、信号量</b>五件套的适用场景。</li>
+        <li>条件变量为什么必须配 while 而不是 if（虚假唤醒）。</li>
+        <li><b>线程池</b>：原理、任务队列、 worker 线程、优雅退出。</li>
+      </ul>
+
+      <h4>模块六 · 内核原理（约 3 天）</h4>
+      <ul>
+        <li>操作系统分层、PCB 与内存模型、CPU 工作模型、进程状态迁移。</li>
+        <li>虚拟内存与物理内存映射、缺页异常、fork 的写时复制实现。</li>
+        <li>系统调用与库函数的关系、上下文切换流程。</li>
+      </ul>
+
+      <h4>模块七 · 网络编程（约 1 周）</h4>
+      <ul>
+        <li>OSI 七层与 TCP/IP 四层、数据封装与解封装。</li>
+        <li>TCP 三次握手 / 四次挥手、滑动窗口、拥塞控制；UDP 特性。</li>
+        <li>Socket 编程：<code>socket/bind/listen/accept/connect/send/recv</code>；字节序转换。</li>
+        <li>多连接服务端：多进程 / 多线程 / <b>IO 多路复用（select / poll / epoll）</b> —— epoll 是面试必考。</li>
+      </ul>
+
+      <h4>本阶段产出（非常重要）</h4>
+      <ul>
+        <li><b>一个完整的 C/S 项目</b>：比如「多线程 TCP 服务器 + 客户端」，支持并发连接、心跳、断线重连、日志记录、配置文件读取。放到 GitHub 上，这是 Linux 岗简历的核心项目。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能手写 Makefile 编译多目录工程；能解释「一个 TCP 连接在内核里占用哪些资源」；能用 epoll 写出支持 100+ 并发的服务端。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="5-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">5.3 系统移植：U-Boot / 内核 / 设备树 / 根文件系统 <span class="tag">3 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li><b>交叉编译</b>：工具链选择（arm-linux-gnueabihf-）、为什么不能在本机 gcc 直接编、环境变量配置。</li>
+        <li><b>U-Boot</b>：启动流程（SPL → U-Boot → 内核）、编译与移植、环境变量、<code>bootcmd</code> 与 <code>bootargs</code>、tftp/nfs 下载调试、烧录到 eMMC/SD。</li>
+        <li><b>Linux 内核</b>：源码结构、<code>make menuconfig</code> 裁剪、编译出 zImage/dtb、启动日志分析（卡在哪一步怎么判断）。</li>
+        <li><b>设备树 DTS</b>：节点与属性、<code>compatible</code> 匹配、pinctrl、时钟、中断；编译为 dtb。<b>这是驱动开发的前置</b>。</li>
+        <li><b>根文件系统</b>：BusyBox 构建、目录结构、<code>/etc/inittab</code>、库文件移植、NFS 挂载调试、Buildroot/Yocto 一键构建。</li>
+        <li>启动全流程串起来：上电 → BootROM → U-Boot → 内核 → 挂载 rootfs → init → 应用。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>从源码编译 U-Boot 与内核，用 TFTP 下载、NFS 挂载根文件系统，让板子跑起自己的系统。</li>
+        <li>修改设备树：点亮一个 GPIO、改一个串口波特率，重新编译 dtb 验证生效。</li>
+        <li>用 Buildroot 构建一套最小系统（含 SSH），并对比手搓的版本差在哪。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>板子起不来时，能根据串口日志定位故障在 U-Boot、内核、还是 rootfs 阶段。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="5-4">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">5.4 驱动开发：字符设备 / platform 总线 / 设备树匹配 <span class="tag">3 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>关键知识点</h4>
+      <ul>
+        <li>内核模块：<code>module_init/exit</code>、<code>printk</code>、Makefile 与内核源码树、<code>insmod/rmmod/lsmod</code>；GPL 协议。</li>
+        <li><b>字符设备</b>：主次设备号、<code>cdev</code>、<code>file_operations</code>（open/read/write/ioctl/release）、<code>copy_to_user/copy_from_user</code>。</li>
+        <li><b>并发控制</b>：自旋锁、互斥量、原子操作、等待队列（阻塞与非阻塞 IO）。</li>
+        <li><b>platform 总线</b>：driver 与 device 匹配、<code>probe</code> 函数、<code>of_match_table</code> 与设备树 <code>compatible</code> 的对应。</li>
+        <li><b>GPIO 子系统</b>：<code>gpio_request/gpiod_get</code>、<code>gpio_set_value</code>；<b>中断</b>：<code>request_irq</code>、中断上下半部（tasklet / 工作队列 / 线程化中断）。</li>
+        <li><b>子系统</b>：I2C 子系统（i2c_driver/i2c_client）、SPI 子系统、输入子系统（input_dev 上报按键）、framebuffer（LCD 驱动）。</li>
+        <li>用户态与内核态数据交换、sysfs/procfs/debugfs 调试接口。</li>
+      </ul>
+      <h4>必做实验</h4>
+      <ul>
+        <li>写一个 LED 字符设备驱动：设备树描述 GPIO → probe 里申请 → 用户态 <code>echo 1 &gt; /dev/led</code> 点亮。</li>
+        <li>写一个按键中断驱动，用等待队列实现阻塞读，用户态程序 <code>read</code> 阻塞等待按键。</li>
+        <li>写一个 I2C 传感器驱动（如 SHT30 温湿度），通过 sysfs 暴露数据。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能独立从「看芯片手册 → 写设备树节点 → 写驱动 → 用户态测试」走完全流程；能解释「probe 函数什么时候被调用」。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 阶段六 ============ -->
+<section id="s6">
+  <h2 class="sec"><span class="no">6</span>阶段六 · 项目实战与就业（约 4 周）</h2>
+  <p class="sec-desc">尚硅谷面授阶段会做大量企业级项目（官网列了 40 个方向：宠物定位器、跌倒监测、智能门锁、四轴无人机、平衡车、蓝牙音箱、FOC 无刷控制、智能网关等）。自学的策略是<b>「精选 2 个做深，其余了解即可」</b>。</p>
+
+  <div class="chapter open" data-ch="6-1">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">6.1 项目选题：一 MCU + 一 Linux，形成组合拳 <span class="tag">1 周启动，贯穿全程</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>推荐组合（按你的背景排序）</h4>
+      <ul>
+        <li><b>首选 A（差异化最强）</b>：<b>带 LVGL 界面的智能家居中控面板</b>（STM32/ESP32 + 触摸屏 + WiFi + MQTT + OTA）。理由：把前端 UI 能力直接变现，面试时最容易讲出彩。</li>
+        <li><b>首选 B（岗位最广）</b>：<b>四轴无人机 / 两轮平衡车</b>（MPU6050 + PID + 姿态解算 + 遥控 + 无刷电机）。理由：控制算法 + 实时性 + 硬件调试全齐，是 MCU 岗的硬通货。</li>
+        <li><b>Linux 组合</b>：<b>智能网关 / 行车记录仪</b>（Linux 板 + 摄像头 + 视频编码 + 4G + Web 配置页）。理由：能把 Linux 驱动、应用、Web 界面全串起来。</li>
+      </ul>
+      <h4>项目要做到什么程度才算「能写进简历」</h4>
+      <ul>
+        <li>有<b>完整的工程结构</b>（分层、模块化、README、接线图、原理图）。</li>
+        <li>有<b>真实约束下的处理</b>：断线重连、异常恢复、参数掉电保存、看门狗、长时间稳定运行。</li>
+        <li>有<b>可量化的指标</b>：帧率、响应延迟、功耗、连续运行时长、通信成功率。</li>
+        <li>有<b>演示材料</b>：3 分钟视频 + 一页项目说明（问题 → 方案 → 难点 → 结果）。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能用 5 分钟讲完一个项目，且面试官追问三层（技术选型、难点细节、如果重做怎么改）你都能答上。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="6-2">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">6.2 简历与面试：把 7 年前端经验变成优势 <span class="tag">1 周</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <h4>简历写法（关键）</h4>
+      <ul>
+        <li><b>不要藏前端经历</b>：写成「7 年软件工程经验 + 全栈能力」，把前端经验翻译成嵌入式能听懂的语言：模块化设计、代码评审、性能优化、多人协作、需求拆解。</li>
+        <li><b>项目描述用 STAR</b>：背景（要解决什么）→ 方案（为什么选这个芯片/协议/架构）→ 我的动作（具体写了哪层代码）→ 结果（量化指标）。</li>
+        <li><b>技术栈关键词</b>要写全：C / STM32 / HAL+寄存器 / FreeRTOS / I2C·SPI·CAN·Modbus / LVGL / Linux / 设备树 / 字符设备驱动 / Git。</li>
+        <li><b>加分项</b>：GitHub 有 star 或持续提交记录；写过技术博客；有实物演示视频。</li>
+      </ul>
+      <h4>面试高频考点（按阶段自查）</h4>
+      <ul>
+        <li><b>C 语言</b>：指针与数组、const/volatile/static、内存分区、大小端、结构体对齐。</li>
+        <li><b>MCU</b>：GPIO 八种模式、中断流程与优先级、堆栈溢出怎么查、PWM 原理、DMA 与 CPU 关系、看门狗。</li>
+        <li><b>通信协议</b>：I2C 时序与卡死恢复、SPI 四模式、UART 波特率误差、CAN 仲裁、Modbus CRC。</li>
+        <li><b>RTOS</b>：任务调度、优先级翻转与继承、队列 vs 信号量 vs 通知、临界区、内存管理方案。</li>
+        <li><b>Linux</b>：fork 与 execve、虚拟内存、TCP 三次握手、epoll 与 select 区别、字符设备驱动流程、设备树匹配。</li>
+        <li><b>项目</b>：你遇到最难的问题是什么、怎么定位的、如果重做会怎么改。</li>
+      </ul>
+      <div class="box ok"><b>验收：</b>能对上面 6 类考点各答出 3 个有细节的例子（不是背概念，是讲自己踩过的坑）。</div>
+    </div>
+  </div>
+
+  <div class="chapter" data-ch="6-3">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">6.3 岗位方向与薪资对照 <span class="tag">决策参考</span></div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <div class="tbl-wrap" style="margin-top:12px;box-shadow:none">
+        <table>
+          <thead><tr><th>方向</th><th>典型岗位</th><th>技术栈重心</th><th>入门难度</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><b>MCU / 物联网终端</b></td><td>嵌入式软件工程师、STM32 工程师、物联网终端开发</td><td>C + STM32 + RTOS + 通信协议</td><td>★★★</td><td>岗位量最大，转行最友好；消费电子、智能家居、工业控制需求稳定</td></tr>
+            <tr><td><b>汽车电子</b></td><td>车载电子工程师、BMS/VCU 开发</td><td>C + CAN/LIN + AUTOSAR + 功能安全</td><td>★★★★</td><td>门槛偏高、行业壁垒强，但抗周期能力最好</td></tr>
+            <tr><td><b>Linux 驱动 / 系统</b></td><td>驱动工程师、系统软件工程师、BSP 工程师</td><td>Linux + 内核 + 设备树 + 驱动</td><td>★★★★★</td><td>周期最长，但薪资上限高，AIoT/车载/服务器周边都有需求</td></tr>
+            <tr><td><b>带屏交互设备</b></td><td>HMI 开发、智能硬件 UI 工程师</td><td>LVGL / Qt + MCU/Linux + 触摸</td><td>★★★☆</td><td><b>你的最优切入点</b>：前端经验直接迁移，竞争者少</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="box warn" style="margin-top:12px"><b>关于「要不要报班」：</b>尚硅谷嵌入式面授就业班官网标价 26800 元（限时 23800），线上同步班 11800 元。自学的成本主要在<b>时间和试错</b>：自学的优势是省钱、可按自己节奏；劣势是遇到硬件问题无人答疑，容易卡住。折中方案：<b>自学为主 + 卡住时买几次一对一答疑/买带教程的板子（板厂技术支持往往比课程更管用）</b>。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 周计划 ============ -->
+<section id="plan">
+  <h2 class="sec"><span class="no">▦</span>22 周全职周计划表（可直接抄进日历）</h2>
+  <p class="sec-desc">按「全职 45h/周」排。半职节奏请把每一行拉长 1.5 倍，或把阶段一、二合并压缩后从阶段三开始。</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th class="nowrap">周次</th><th>阶段</th><th>本周内容</th><th>周末里程碑（必须完成）</th></tr></thead>
+      <tbody>
+        <tr><td class="nowrap">W1</td><td>一</td><td>电子元器件 + 面包板实验</td><td>能算出限流电阻、用 MOS 驱动电机</td></tr>
+        <tr><td class="nowrap">W2</td><td>一</td><td>C 语言：指针 / 内存布局 / 位运算</td><td>手写 ring buffer + 位操作宏</td></tr>
+        <tr><td class="nowrap">W3</td><td>一</td><td>数字电路 + 仪器使用</td><td>Logisim 计数器；示波器测出 PWM 占空比</td></tr>
+        <tr><td class="nowrap">W4</td><td>一</td><td>原理图 &amp; PCB，打样</td><td>自画 STM32 最小系统板下单打样</td></tr>
+        <tr><td class="nowrap">W5</td><td>二</td><td>8051 架构、GPIO、按键</td><td>点灯 + 按键消抖</td></tr>
+        <tr><td class="nowrap">W6</td><td>二</td><td>中断、定时器、串口</td><td>定时器精准 1s + 串口双向通信</td></tr>
+        <tr><td class="nowrap">W7</td><td>二</td><td>数码管 / LCD1602 / I2C / 单总线</td><td>EEPROM 掉电保存 + DS18B20 显示</td></tr>
+        <tr><td class="nowrap">W8</td><td>二</td><td>电机驱动 + 智能小车项目</td><td>小车连续跑 10 分钟 + GitHub README</td></tr>
+        <tr><td class="nowrap">W9</td><td>三</td><td>STM32 概述、GPIO 四级进化</td><td>不依赖模板手写点灯</td></tr>
+        <tr><td class="nowrap">W10</td><td>三</td><td>时钟系统 + HAL + 中断 NVIC/EXTI</td><td>画出完整时钟树；按键中断稳定</td></tr>
+        <tr><td class="nowrap">W11</td><td>三</td><td>USART 三种方式 + 协议设计</td><td>变长收包状态机 + DMA+IDLE</td></tr>
+        <tr><td class="nowrap">W12</td><td>三</td><td>I2C（软件模拟 + 硬件）</td><td>EEPROM 驱动 + 逻辑分析仪验证</td></tr>
+        <tr><td class="nowrap">W13</td><td>三</td><td>定时器全家桶</td><td>非阻塞多任务闪灯 + 输入捕获测频</td></tr>
+        <tr><td class="nowrap">W14</td><td>三</td><td>DMA + ADC</td><td>ADC+DMA 波形显示在屏上</td></tr>
+        <tr><td class="nowrap">W15</td><td>三</td><td>SPI + Flash + 存储器映射</td><td>自研参数存储模块（CRC + 双备份）</td></tr>
+        <tr><td class="nowrap">W16</td><td>三</td><td>FSMC + LCD 显示</td><td>字符/汉字/图片/画圆全跑通</td></tr>
+        <tr><td class="nowrap">W17</td><td>三</td><td>物联网通信（CAN/Modbus/WiFi/MQTT）</td><td>数据上云 + 手机端可控制</td></tr>
+        <tr><td class="nowrap">W18</td><td>四</td><td>FreeRTOS 任务 + 通信机制</td><td>采集终端改造为多任务 + 优先级翻转实验</td></tr>
+        <tr><td class="nowrap">W19</td><td>四</td><td>BootLoader / OTA + LVGL</td><td>串口 OTA 成功升级 + 模拟器 UI 完成</td></tr>
+        <tr><td class="nowrap">W20</td><td>六</td><td>项目冲刺（第一阶段：功能打通）</td><td>项目主体功能可演示</td></tr>
+        <tr><td class="nowrap">W21</td><td>六</td><td>项目打磨（稳定性/异常/指标）+ 简历</td><td>连续运行 24h + 简历初版</td></tr>
+        <tr><td class="nowrap">W22</td><td>六</td><td>面试题库 + 模拟面试 + 投递</td><td>投出 30 份简历，开始面试</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <b>关于 Linux 阶段：</b>上表是全职 22 周（MCU 主线）。若要走 Linux 方向，在 W19 之后插入 <b>10 周</b> Linux 阶段（Ubuntu 1 周 → 应用层 4 周 → 系统移植 3 周 → 驱动 2 周），总周期约 32 周，项目改为 Linux 类项目。
+  </div>
+</section>
+
+<!-- ============ 器材 ============ -->
+<section id="kit">
+  <h2 class="sec"><span class="no">▣</span>器材清单与预算（参考价，按需分批买）</h2>
+  <p class="sec-desc">别一次买齐。按阶段买：阶段一只需要万用表 + 面包板 + 元件包；阶段二买 51 板；阶段三买 STM32；阶段五才买 Linux 板。</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>阶段</th><th>器材</th><th>参考价</th><th>选购要点</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="5"><b>一</b></td><td>数字万用表</td><td>50–150 元</td><td>要带通断蜂鸣、电容档；不必买贵的</td></tr>
+        <tr><td>面包板 + 杜邦线 + 元件包</td><td>60–120 元</td><td>元件包选「基础元件套装」，含电阻电容二极管三极管 MOS</td></tr>
+        <tr><td>恒温焊台（含风枪更好）</td><td>150–400 元</td><td>可调温、带休眠；风枪用于贴片返修</td></tr>
+        <tr><td>入门示波器</td><td>500–1500 元</td><td>100MHz 带宽、双通道即可；预算紧可先买逻辑分析仪</td></tr>
+        <tr><td>逻辑分析仪（8 通道）</td><td>50–150 元</td><td>必买，调 I2C/SPI/UART 的神器</td></tr>
+
+        <tr><td><b>二</b></td><td>51 开发板（普中/清翔等）</td><td>60–150 元</td><td>选带小车底盘的套装，直接做阶段项目</td></tr>
+
+        <tr><td rowspan="3"><b>三</b></td><td>STM32F103C8T6 最小系统板 + ST-Link</td><td>50–100 元</td><td>入门够用；也可选尚硅谷自研开发板（与教程完全配套，少踩坑）</td></tr>
+        <tr><td>外设模块包</td><td>100–200 元</td><td>LCD(ILI9341)、AT24C02、W25Q32、DS18B20、MPU6050、ESP8266</td></tr>
+        <tr><td>调试器升级（DAP-Link/J-Link）</td><td>50–300 元</td><td>要能在线调试、看变量、单步</td></tr>
+
+        <tr><td rowspan="3"><b>五</b></td><td>Linux 开发板（I.MX6ULL / RK3568）</td><td>500–1500 元</td><td><b>优先选资料全、论坛活跃的板厂（正点原子/野火）</b>，别图便宜买冷门板</td></tr>
+        <tr><td>USB 转 TTL 串口模块</td><td>15–30 元</td><td>CH340/CP2102，必备两个</td></tr>
+        <tr><td>SD 卡 / 读卡器 / 网线</td><td>50 元</td><td>烧系统与 NFS 调试要用</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <b>总计约 2000–4000 元</b>（不含示波器则约 1500–2500）。相比面授班 23800 元，这也是自学最直接的成本优势。<b>唯一建议别省的是：逻辑分析仪、ST-Link（能在线调试的那个）、以及一块资料齐全的 Linux 板。</b>
+  </div>
+</section>
+
+<!-- ============ 避坑 ============ -->
+<section id="pit">
+  <h2 class="sec"><span class="no">⚠</span>避坑清单（前端转嵌入式最容易踩的 10 个坑）</h2>
+
+  <div class="chapter open" data-ch="pit">
+    <div class="ch-head">
+      <input type="checkbox">
+      <div class="ch-title">10 条，逐条对照，中一条就停下来改</div>
+      <span class="ch-fold">▸</span>
+    </div>
+    <div class="ch-body">
+      <ul>
+        <li><b>1. 只看视频不动手。</b>嵌入式的知识密度在「现象」里，不在「讲解」里。视频看懂 ≠ 会做，必须 1:2 配比动手。</li>
+        <li><b>2. 陷进模电教材。</b>《模拟电子技术》可以当字典查，不要从头读到尾。你需要的只是「看得懂 + 算得出」。</li>
+        <li><b>3. 一上来只学 HAL 库。</b>只会 HAL 的人，遇到问题是盲的。寄存器必须走一遍，哪怕只走 GPIO、串口、定时器三个。</li>
+        <li><b>4. 买最便宜的板子。</b>没有原理图、没技术支持、没例程的板子，会让你 80% 的时间花在找资料上。</li>
+        <li><b>5. 跳过 Makefile 和 Shell。</b>Linux 阶段的所有痛苦，一半来自不会看编译错误和脚本。</li>
+        <li><b>6. 不做笔记，反复回看。</b>每个外设建一页「寄存器 + 坑点」笔记，复习成本会下降 5 倍。</li>
+        <li><b>7. 追求做「很多项目」，每个都只做一半。</b>两个做深 > 十个做浅。面试只问细节。</li>
+        <li><b>8. 代码全塞在 main.c。</b>从阶段二开始就分模块（bsp / driver / app），否则到 STM32 阶段你会被自己写死。</li>
+        <li><b>9. 不用 Git。</b>每天 commit 一次，一是留痕，二是简历上能给面试官看真实过程。</li>
+        <li><b>10. 等到「学完」才找工作。</b>阶段三结束（约 W16）就可以开始投「嵌入式软件助理/实习」，边面边补，面试反馈是最好的学习大纲。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <b>最后一句实话：</b>这套大纲的内容量，按尚硅谷面授的节奏是 5–6 个月全日制。自学最大的敌人不是难度，是<b>「没有外部节奏」</b>——没人催、没人答疑、没人告诉你「这题不用深究」。所以：① 固定每天同一时段开工；② 每周日给自己做一次「里程碑验收」，不达标就补，别往下走；③ 找一个能问问题的地方（板厂论坛/技术群），卡超过 2 小时就去问，别硬耗。
+  </div>
+</section>
+
+<footer>
+  说明：本教案的六阶段框架与模块划分对标尚硅谷「嵌入式（物联网方向）」公开课程大纲；STM32（194 集）、Linux 应用层（130 集）等章节颗粒度参考其官网公开视频目录；学习时长、周计划、验收标准、器材建议与就业分析为自学场景下的补充整理，非官方课表。课程内容与价格以官网最新公示为准。
+</footer>
+</div>
+
+<script>
+(function(){
+  const KEY='atguigu-embed-progress-v1';
+  const boxes=[...document.querySelectorAll('.ch-head input[type=checkbox]')];
+  const fill=document.getElementById('fill'), num=document.getElementById('num');
+  const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
+
+  boxes.forEach((b,i)=>{
+    const chap=b.closest('.chapter');
+    const id=chap.dataset.ch||('c'+i);
+    if(saved[id]) b.checked=true;
+    b.addEventListener('change',()=>{
+      const s=JSON.parse(localStorage.getItem(KEY)||'{}');
+      if(b.checked){s[id]=1; chap.classList.add('done');}
+      else{delete s[id]; chap.classList.remove('done');}
+      localStorage.setItem(KEY,JSON.stringify(s));
+      update();
+    });
+    if(b.checked) chap.classList.add('done');
+    // 折叠
+    chap.querySelector('.ch-head').addEventListener('click',e=>{
+      if(e.target.tagName==='INPUT') return;
+      chap.classList.toggle('open');
+    });
+  });
+
+  function update(){
+    const done=boxes.filter(b=>b.checked).length;
+    const pct=boxes.length?Math.round(done*100/boxes.length):0;
+    fill.style.width=pct+'%';
+    num.textContent=done+' / '+boxes.length+' 章';
+  }
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    if(!confirm('确定清空所有进度标记？')) return;
+    localStorage.removeItem(KEY);
+    boxes.forEach(b=>{b.checked=false;b.closest('.chapter').classList.remove('done')});
+    update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>
