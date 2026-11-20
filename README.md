@@ -14,6 +14,8 @@
 - 进度存在浏览器 `localStorage`（键名 `embedded-roadmap:progress:v1`），换设备不同步
 - 左侧目录导航 + 移动端抽屉目录，支持 `#s1` 这类锚点直达
 - 打印 / 另存 PDF：自动展开所有卡片、隐藏导航（`no-print`、`print-expand`）
+- 一键导出「长图」PNG：自动展开全部章节，1180px 版式固定，适合发微信 / 小红书 / 群分享
+- 一键导出「PDF」：按 A4 竖向分页，切页自动避开文字行，适合存档与打印
 - 墨绿主题通过 Tailwind v4 的 `@theme` token 统一管理，改一处全站生效
 
 ## 技术栈
@@ -24,6 +26,7 @@
 | 框架 | React 19 + TypeScript 7（`verbatimModuleSyntax`、`tsc -b` 项目引用） |
 | 样式 | Tailwind CSS 4（`@tailwindcss/vite` 插件，无 `tailwind.config.js`） |
 | 包管理 | pnpm 9 |
+| 导出 | html-to-image（长图截图）+ jsPDF（分页 PDF），两者均按需动态加载 |
 | Lint / 格式化 | oxlint + Prettier |
 | 部署 | GitHub Actions → GitHub Pages |
 
@@ -65,11 +68,20 @@ embedded-roadmap/
 │  ├─ lib/
 │  │  ├─ rich-text.tsx            # 解析 **粗体** 与 `代码`
 │  │  ├─ storage.ts               # localStorage 读写
-│  │  └─ utils.ts                 # cn / pad2
-│  ├─ hooks/useProgress.tsx       # 进度 Context（Provider + useProgress）
+│  │  ├─ utils.ts                 # cn / pad2
+│  │  └─ export/                  # 导出能力（与 UI 解耦）
+│  │     ├─ capture.ts            # 分段截图 + canvas 纵向拼接
+│  │     ├─ pdf.ts                # 长图按 A4 分页，切页吸附到空白行
+│  │     └─ save.ts               # 文件名日期戳 / PNG 下载
+│  ├─ hooks/
+│  │  ├─ progressContext.ts       # 进度 Context 与 useProgress
+│  │  ├─ ProgressProvider.tsx     # 进度状态与 localStorage 同步
+│  │  ├─ exportContext.ts         # 导出 Context 与 useExport
+│  │  └─ ExportProvider.tsx       # 导出状态机（等字体 → 截图 → 下载）
 │  ├─ components/
 │  │  ├─ layout/                  # SiteHeader、ProgressBar、StickyBar、SideNav、MobileNav、AppShell
 │  │  ├─ section/                 # Preface / Overview / Stage / Plan / Kit / Pitfall 六个区块
+│  │  ├─ export/                  # ExportActions（两个按钮）、ExportView（隐藏长图视图）、ExportOverlay（进度遮罩）
 │  │  └─ ui/                      # Badge、Callout、DataTable、BlockRenderer、ChapterCard、SectionHeading
 ├─ vite.config.ts                 # base 自适应仓库名 + tailwind 插件 + @ 别名
 └─ tsconfig.app.json              # paths: @/* → src/*
@@ -142,6 +154,29 @@ embedded-roadmap/
 
 改品牌色只需要替换 `--color-brand-*` 这几行，标题栏、链接、进度条、徽章会一起变。
 
+## 导出长图与 PDF
+
+吸顶条上有两个按钮：**长图**、**PDF**。点击后会先弹出一个遮罩显示进度，导出完成后浏览器直接下载文件，文件名形如
+`嵌入式自学路线图-长图-2026-11-20.png` / `嵌入式自学路线图-2026-11-20.pdf`。
+
+实现分三层，互不耦合，方便你日后替换方案：
+
+| 层 | 文件 | 职责 |
+| --- | --- | --- |
+| 视图 | `components/export/ExportView.tsx` | 导出专用的隐藏长图（`#export-root`）：固定 1180px 宽、章节全部展开、不含吸顶条与目录 |
+| 截图 | `lib/export/capture.ts` | 逐个 `[data-export-part]` 区块截图，再在 canvas 上纵向拼接 |
+| 输出 | `lib/export/save.ts`、`pdf.ts` | PNG 直接下载；PDF 按 A4 切页后交给 jsPDF |
+
+几个刻意为之的设计：
+
+- **分段截图**：整份教案展开后约 2.2 万像素高，一次性截会撞上浏览器 canvas 尺寸上限，所以按区块切、逐块拼。
+- **分辨率自适应**：默认 2 倍图；估算高度超过 40000px 自动降到 1.5 倍，再超降 1 倍，兼顾清晰度与稳定。当前内容实际输出 1770 × 33876。
+- **PDF 切页吸附**：切点会向上找最近的空白像素行，避免一行文字被页边切成两半。
+- **按需加载**：`html-to-image` 在主包里（约 20KB），`jsPDF` 与它依赖的 html2canvas 单独成 chunk，只有点「PDF」才下载。
+- **想改导出样式**：只改 `ExportView.tsx`；想改文件命名：只改 `ExportProvider.tsx` 里的文件名；想换 PDF 方案：只替换 `pdf.ts`。
+
+导出耗时参考：本机 Chrome 长图约 8–15 秒，PDF 约 15–25 秒（含 14 页切页与 JPEG 编码）。
+
 ## 部署到 GitHub Pages
 
 1. 在 GitHub 新建空仓库（例如 `embedded-roadmap`），**不要**勾选初始化 README。
@@ -173,6 +208,9 @@ embedded-roadmap/
 | Pages 显示 404 | Source 没选 GitHub Actions，或首次部署还没跑完 | 检查 Settings → Pages 与 Actions 运行记录 |
 | 勾选进度重启浏览器后丢失 | 无痕模式 / 清了 localStorage | 正常模式访问，或换设备后重新勾选（进度仅存本地） |
 | `tsc` 报 `baseUrl` 相关错误 | TS 7 已移除 `baseUrl` | 只用 `paths`，不要加 `baseUrl` |
+| 导出按钮点了没反应 / 一直「准备中」 | 浏览器标签页被切到后台，`requestAnimationFrame` 被节流 | 保持标签页在前台再点一次 |
+| 长图下载失败或只有一块白图 | 内容被浏览器拦截（内存不足 / 装了截图类插件） | 关掉同类插件重试，或改用「打印 → 另存为 PDF」 |
+| PDF 里某页底部留白较多 | 切页吸附到了最近的空白行 | 正常现象，换来的是没有文字被页边切断 |
 
 ## 许可
 
